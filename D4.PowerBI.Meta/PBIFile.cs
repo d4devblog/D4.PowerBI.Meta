@@ -1,4 +1,5 @@
-﻿using System;
+﻿using D4.PowerBI.Meta.Constants;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -11,16 +12,6 @@ namespace D4.PowerBI.Meta
         private readonly Stream _fileStream;
         private ZipArchive? _archive = null;
         private IList<ZipArchiveEntry> _archiveEntries = new List<ZipArchiveEntry>();
-        private readonly List<string> _archiveFilenames = new() 
-        {
-            "[Content_Types].xml",
-            "DiagramLayout",
-            "Metadata",
-            "Report/Layout",
-            "SecurityBindings", 
-            "Settings",
-            "Version"
-        };
 
         public PBIFile(Stream fileStream)
         {
@@ -31,10 +22,10 @@ namespace D4.PowerBI.Meta
         {
             get
             {
-                var matchFileCount = _archiveEntries.Count(x => 
-                    _archiveFilenames.Contains(x.FullName));
+                var matchFileCount = _archiveEntries.Count(x =>
+                    PbiFileContents.FileNames.Contains(x.FullName));
 
-                return matchFileCount == _archiveFilenames.Count;
+                return matchFileCount == PbiFileContents.FileNames.Count;
             }
         }
 

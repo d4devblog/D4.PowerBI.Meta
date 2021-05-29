@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using D4.PowerBI.Meta.Constants;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -10,7 +11,9 @@ namespace D4.PowerBI.Meta.Content
         {
             var fileVersion = string.Empty;
 
-            var versionFile = pbiFile.ArchiveEntries.FirstOrDefault(x => x.FullName == "Version");
+            var versionFile = pbiFile.ArchiveEntries
+                .FirstOrDefault(x => x.FullName == PbiFileContents.Version);
+
             if (versionFile != null)
             {
                 var reader = new StreamReader(versionFile.Open(), Encoding.Unicode);
