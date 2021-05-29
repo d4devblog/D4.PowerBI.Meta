@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 
 namespace D4.PowerBI.Meta
 {
-    public class PBIFile
+    public class PBIFile : IDisposable
     {
-        private readonly bool _canRead = false;
-        private readonly long _fileLength = 0;
         private readonly Stream _fileStream;
+        private ZipArchive? _archive = null;
         private IList<ZipArchiveEntry> _archiveEntries = new List<ZipArchiveEntry>();
         private readonly List<string> _archiveFilenames = new() 
         {
@@ -25,8 +25,6 @@ namespace D4.PowerBI.Meta
         public PBIFile(Stream fileStream)
         {
             _fileStream = fileStream;
-            _canRead = fileStream.Length > 0;
-            _fileLength = fileStream.Length;
         }
 
         public bool IsValidPbiFile
@@ -40,13 +38,23 @@ namespace D4.PowerBI.Meta
             }
         }
 
-        public bool CanRead => _canRead;
-        public long FileLength => _fileLength;
+        public bool CanRead => _fileStream.CanRead;
+        public long FileLength => _fileStream.Length;
+
+        internal IList<ZipArchiveEntry> ArchiveEntries => _archiveEntries;
 
         public void Initialise()
         {
-            using var archive = new ZipArchive(_fileStream);
-            _archiveEntries = archive.Entries;
+            _archive = new ZipArchive(_fileStream, ZipArchiveMode.Read, true);
+            _archiveEntries = _archive.Entries;
+        }
+
+        public void Dispose()
+        {
+            if (_archive != null)
+            {
+                _archive.Dispose();
+            }
         }
     }
 }
