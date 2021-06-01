@@ -1,15 +1,11 @@
-﻿using D4.PowerBI.Meta.Content;
+﻿using D4.PowerBI.Meta.Read;
 using FluentAssertions;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace D4.PowerBI.Meta.Tests.Content
+namespace D4.PowerBI.Meta.Tests.Read
 {
     public class FileVersionTests
     {

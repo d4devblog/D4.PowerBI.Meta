@@ -8,6 +8,7 @@
   <ItemGroup>
     <None Remove="PBIX\empty.pbit" />
     <None Remove="PBIX\empty.pbix" />
+    <None Remove="PBIX\fixedDataWithDataLayout.pbix" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,6 +16,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="PBIX\empty.pbix">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PBIX\fixedDataWithDataLayout.pbix">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

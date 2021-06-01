@@ -3,9 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace D4.PowerBI.Meta.Content
+namespace D4.PowerBI.Meta.Read
 {
-    public static class FileVersion
+    public static class FileVersionReader
     {
         public static string ReadFileVersion(this PBIFile pbiFile)
         {
