@@ -9,6 +9,7 @@
     <None Remove="PBIX\empty.pbit" />
     <None Remove="PBIX\empty.pbix" />
     <None Remove="PBIX\fixedDataWithDataLayout.pbix" />
+    <None Remove="PBIX\reportPagesWithShapes.pbix" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +20,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="PBIX\fixedDataWithDataLayout.pbix">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PBIX\reportPagesWithShapes.pbix">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
