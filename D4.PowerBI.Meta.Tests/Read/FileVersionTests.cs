@@ -7,6 +7,7 @@ using Xunit;
 
 namespace D4.PowerBI.Meta.Tests.Read
 {
+    [Collection("empty-pbix-tests")]
     public class FileVersionTests
     {
         [Theory]

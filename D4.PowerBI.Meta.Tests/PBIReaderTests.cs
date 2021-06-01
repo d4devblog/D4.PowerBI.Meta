@@ -8,6 +8,7 @@ using Xunit;
 
 namespace D4.PowerBI.Meta.Tests
 {
+    [Collection("empty-pbix-tests")]
     public class PBIReaderTests
     {
         [Theory]
