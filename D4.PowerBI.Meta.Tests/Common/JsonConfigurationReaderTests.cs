@@ -1,15 +1,16 @@
 ﻿using D4.PowerBI.Meta.Common;
 using D4.PowerBI.Meta.Constants;
 using FluentAssertions;
-using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Xunit;
 
 namespace D4.PowerBI.Meta.Tests.Common
 {
     public class JsonConfigTestObject
     {
-        public string? config { get; set; }
+        [JsonPropertyName("config")]
+        public string? Config { get; set; }
     }
 
     public class JsonConfigurationReaderTests
@@ -27,7 +28,7 @@ namespace D4.PowerBI.Meta.Tests.Common
 
             var properties = JsonConfigurationReader.ReadPropertyConfigurationNode(document.RootElement);
             properties.Should().NotBeNull();
-            properties.Count().Should().Be(0);
+            properties.Should().HaveCount(0);
         }
 
         [Theory]
@@ -43,7 +44,7 @@ namespace D4.PowerBI.Meta.Tests.Common
         {
             var config = new JsonConfigTestObject
             {
-                config = rawJson
+                Config = rawJson
             };
 
             var document = JsonDocument.Parse(JsonSerializer.Serialize(config));
@@ -51,12 +52,44 @@ namespace D4.PowerBI.Meta.Tests.Common
 
             var properties = JsonConfigurationReader.ReadPropertyConfigurationNode(configElement);
             properties.Should().NotBeNull();
-            properties.Count().Should().Be(1);
+            properties.Should().HaveCount(1);
 
             properties[0].Name.Should().Be(propertyName);
             properties[0].Value.Should().BeEquivalentTo(value);
             properties[0].Raw.Should().NotBeEmpty();
             properties[0].ChildProperties.Should().BeEmpty("JSON Properties dont have child values");
+        }
+
+        [Fact]
+        public void WHEN_json_contains_nested_properties_THEN_all_parent_child_properties_are_returned()
+        {
+            var rawJson = "{ \"parentObject\": {\"childStringProperty\": \"abc\", \"childNumericProperty\": 123} }";
+            var config = new JsonConfigTestObject
+            {
+                Config = rawJson
+            };
+
+            var document = JsonDocument.Parse(JsonSerializer.Serialize(config));
+            var configElement = document.RootElement.GetProperty(ReportLayoutDocument.Configuration);
+
+            var properties = JsonConfigurationReader.ReadPropertyConfigurationNode(configElement);
+            properties.Should().NotBeNull();
+            properties.Should().HaveCount(1);
+
+            properties[0].Name.Should().Be("parentObject");
+            properties[0].Value.Should().BeNull();
+            properties[0].Raw.Should().NotBeEmpty();
+            properties[0].ChildProperties.Should().HaveCount(2);
+
+            properties[0].ChildProperties[0].Name.Should().Be("childStringProperty");
+            properties[0].ChildProperties[0].Value.Should().Be("abc");
+            properties[0].ChildProperties[0].Raw.Should().NotBeEmpty();
+            properties[0].ChildProperties[0].ChildProperties.Should().HaveCount(0);
+
+            properties[0].ChildProperties[1].Name.Should().Be("childNumericProperty");
+            properties[0].ChildProperties[1].Value.Should().Be(123);
+            properties[0].ChildProperties[1].Raw.Should().NotBeEmpty();
+            properties[0].ChildProperties[1].ChildProperties.Should().HaveCount(0);
         }
     }
 }

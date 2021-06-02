@@ -11,6 +11,14 @@ namespace D4.PowerBI.Meta.Tests
     [Collection("empty-pbix-tests")]
     public class PBIReaderTests
     {
+        private readonly string _testFilePath = string.Empty;
+
+        public PBIReaderTests()
+        {
+            _testFilePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
+        }
+
+#pragma warning disable CS8604 // Possible null reference argument is intentional.
         [Theory]
         [InlineData("")]
         [InlineData(null)]
@@ -22,13 +30,13 @@ namespace D4.PowerBI.Meta.Tests
             Func<Task<PBIFile>> sutAsync = async () => await PBIReader.OpenFileAsync(path);
             sutAsync.Should().Throw<ArgumentException>();
         }
+#pragma warning restore CS8604
 
         [Theory]
         [InlineData("pbix/does-not-exist.pbix")]
         public void WHEN_path_does_not_resolve_to_a_file_THEN_file_not_found_exception_thrown(string filename)
         {
-            string? path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var fullPath = Path.Combine(path, filename);
+            var fullPath = Path.Combine(_testFilePath, filename);
 
             Func<PBIFile> sut = () => PBIReader.OpenFile(fullPath);
             sut.Should().Throw<FileNotFoundException>()
@@ -44,8 +52,7 @@ namespace D4.PowerBI.Meta.Tests
         [InlineData("pbix/empty.pbit")]
         public void WHEN_path_resolves_to_a_pbix_or_pbit_THEN_the_file_is_read_and_pbi_file_object_returned(string filename)
         {
-            string? path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var fullPath = Path.Combine(path, filename);
+            var fullPath = Path.Combine(_testFilePath, filename);
 
             var sut = PBIReader.OpenFile(fullPath);
             sut.Should().NotBeNull();
@@ -59,8 +66,7 @@ namespace D4.PowerBI.Meta.Tests
         [InlineData("pbix/empty.pbit")]
         public async Task WHEN_path_resolves_to_a_pbix_or_pbit_THEN_the_file_is_read_async_nd_pbi_file_object_returned(string filename)
         {
-            string? path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var fullPath = Path.Combine(path, filename);
+            var fullPath = Path.Combine(_testFilePath, filename);
 
             var sut = await PBIReader.OpenFileAsync(fullPath);
             sut.Should().NotBeNull();
@@ -69,12 +75,14 @@ namespace D4.PowerBI.Meta.Tests
             sut.IsValidPbiFile.Should().BeTrue();
         }
 
+#pragma warning disable CS8604 // Possible null reference argument is intentional.
         [Fact]
         public void WHEN_stream_is_null_THEN_an_argument_exception_is_thrown()
         {
             Stream? stream = null;
 
             Func<PBIFile> sut = () => PBIReader.OpenFile(stream);
+
             sut.Should().Throw<ArgumentException>()
                 .WithMessage("'fileStream' cannot be null.");
 
@@ -82,6 +90,7 @@ namespace D4.PowerBI.Meta.Tests
             sutAsync.Should().Throw<ArgumentException>()
                 .WithMessage($"'fileStream' cannot be null.");
         }
+#pragma warning restore CS8604
 
         [Fact]
         public void WHEN_stream_is_empty_THEN_an_argument_exception_is_thrown()
@@ -116,19 +125,16 @@ namespace D4.PowerBI.Meta.Tests
         [InlineData("pbix/empty.pbit")]
         public void WHEN_stream_contains_pbix_or_pbit_data_THEN_the_file_is_read_and_pbi_file_object_returned(string filename)
         {
-            string? path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var fullPath = Path.Combine(path, filename);
+            var fullPath = Path.Combine(_testFilePath, filename);
 
-            using (var fileStream = new FileStream(fullPath, FileMode.Open))
-            {
-                var length = fileStream.Length;
+            using var fileStream = new FileStream(fullPath, FileMode.Open);
+            var length = fileStream.Length;
 
-                var sut = PBIReader.OpenFile(fileStream);
-                sut.Should().NotBeNull();
-                sut.CanRead.Should().BeTrue();
-                sut.FileLength.Should().Be(length);
-                sut.IsValidPbiFile.Should().BeTrue();
-            }
+            var sut = PBIReader.OpenFile(fileStream);
+            sut.Should().NotBeNull();
+            sut.CanRead.Should().BeTrue();
+            sut.FileLength.Should().Be(length);
+            sut.IsValidPbiFile.Should().BeTrue();
         }
 
         [Theory]
@@ -136,17 +142,15 @@ namespace D4.PowerBI.Meta.Tests
         [InlineData("pbix/empty.pbit")]
         public async Task WHEN_stream_contains_pbix_or_pbit_data_THEN_the_file_is_read_async_and_pbi_file_object_returned(string filename)
         {
-            string? path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var fullPath = Path.Combine(path, filename);
+            var fullPath = Path.Combine(_testFilePath, filename);
 
-            using (var asyncFileStream = new FileStream(fullPath, FileMode.Open))
-            {
-                var sutAsync = await PBIReader.OpenFileAsync(asyncFileStream);
-                sutAsync.Should().NotBeNull();
-                sutAsync.CanRead.Should().BeTrue();
-                sutAsync.FileLength.Should().Be(asyncFileStream.Length);
-                sutAsync.IsValidPbiFile.Should().BeTrue();
-            }
+            using var asyncFileStream = new FileStream(fullPath, FileMode.Open);
+
+            var sutAsync = await PBIReader.OpenFileAsync(asyncFileStream);
+            sutAsync.Should().NotBeNull();
+            sutAsync.CanRead.Should().BeTrue();
+            sutAsync.FileLength.Should().Be(asyncFileStream.Length);
+            sutAsync.IsValidPbiFile.Should().BeTrue();
         }
     }
 }

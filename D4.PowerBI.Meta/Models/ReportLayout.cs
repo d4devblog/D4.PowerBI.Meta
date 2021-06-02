@@ -6,7 +6,7 @@ namespace D4.PowerBI.Meta.Models
     {
         public int Id { get; set; }
 
-        public List<ReportPage> ReportPages { get; set; } = new List<ReportPage>();
+        public List<ReportPage> ReportPages { get; set; } = new();
 
         public List<ConfigurableProperty> Configuration { get; set; } = new();
     }

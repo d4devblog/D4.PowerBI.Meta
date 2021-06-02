@@ -17,13 +17,19 @@ namespace D4.PowerBI.Meta.Tests.Read
         private const string TableOne = "TableOne";
         private const string TableTwo = "TableTwo";
 
+        private readonly string _testFilePath = string.Empty;
+
+        public DiagramLayoutTests()
+        {
+            _testFilePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
+        }
+
         [Theory]
         [InlineData("pbix/fixedDataWithDataLayout.pbix", 3, "1.1.0")]
         public async Task WHEN_pbi_file_is_read_THEN_diagram_layout_is_returned(
             string filename, int numberOfDiagrams, string version)
         {
-            string? path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var fullPath = Path.Combine(path, filename);
+            var fullPath = Path.Combine(_testFilePath, filename);
 
             var sut = await PBIReader.OpenFileAsync(fullPath);
             var diagramLayout = sut.ReadDiagramLayout();
@@ -37,8 +43,7 @@ namespace D4.PowerBI.Meta.Tests.Read
         [InlineData("pbix/fixedDataWithDataLayout.pbix")]
         public async Task WHEN_diagram_layout_returned_THEN_it_contains_expected_values(string filename)
         {
-            string? path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var fullPath = Path.Combine(path, filename);
+            var fullPath = Path.Combine(_testFilePath, filename);
 
             var sut = await PBIReader.OpenFileAsync(fullPath);
             var diagramLayout = sut.ReadDiagramLayout();
@@ -53,7 +58,7 @@ namespace D4.PowerBI.Meta.Tests.Read
             diagramLayout?.SelectedDiagram.Should().Be(SelectedDiagram);
 
             diagramOne?.Name.Should().Be(AllTables);
-            diagramOne?.Nodes.Count().Should().Be(2);
+            diagramOne?.Nodes.Should().HaveCount(2);
             diagramOne?.Nodes.First().NodeIndex.Should().Be(TableOne);
             diagramOne?.Nodes.First().Location.Should().NotBeNull();
             diagramOne?.Nodes.First().Size.Should().NotBeNull();
@@ -62,13 +67,13 @@ namespace D4.PowerBI.Meta.Tests.Read
             diagramOne?.Nodes.Last().Size.Should().NotBeNull();
 
             diagramTwo?.Name.Should().Be(LayoutOne);
-            diagramTwo?.Nodes.Count().Should().Be(1);
+            diagramTwo?.Nodes.Should().HaveCount(1);
             diagramTwo?.Nodes.First().NodeIndex.Should().Be(TableOne);
             diagramTwo?.Nodes.First().Location.Should().NotBeNull();
             diagramTwo?.Nodes.First().Size.Should().NotBeNull();
 
             diagramThree?.Name.Should().Be(LayoutTwo);
-            diagramThree?.Nodes.Count().Should().Be(1);
+            diagramThree?.Nodes.Should().HaveCount(1);
             diagramThree?.Nodes.First().NodeIndex.Should().Be(TableTwo);
             diagramThree?.Nodes.First().Location.Should().NotBeNull();
             diagramThree?.Nodes.First().Size.Should().NotBeNull();

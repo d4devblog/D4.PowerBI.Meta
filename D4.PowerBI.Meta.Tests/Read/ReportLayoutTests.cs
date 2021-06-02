@@ -10,20 +10,26 @@ namespace D4.PowerBI.Meta.Tests.Read
 {
     public class ReportLayoutTests
     {
+        private readonly string _testFilePath = string.Empty;
+
+        public ReportLayoutTests()
+        {
+            _testFilePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
+        }
+
         [Theory]
         [InlineData("pbix/reportPagesWithShapes.pbix")]
         public async Task WHEN_pbi_file_is_read_THEN_report_layout_is_returned(
             string filename)
         {
-            string? path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var fullPath = Path.Combine(path, filename);
+            var fullPath = Path.Combine(_testFilePath, filename);
 
             var sut = await PBIReader.OpenFileAsync(fullPath);
             var reportLayout = sut.ReadReportLayout();
 
             reportLayout.Should().NotBeNull();
             reportLayout.Configuration.Count.Should().BeGreaterThan(0);
-            reportLayout.ReportPages.Count.Should().Be(2);
+            reportLayout.ReportPages.Should().HaveCount(2);
 
             reportLayout.ReportPages[0].Name.Should().Be("ReportSection");
             reportLayout.ReportPages[0].DisplayName.Should().Be("Page With Shape");
@@ -39,7 +45,7 @@ namespace D4.PowerBI.Meta.Tests.Read
                 x.Height.Should().Be(720);
                 x.DisplayOption.Should().Be(DisplayOption.SixteenByNine);
                 x.VisualElements.Should().NotBeNull();
-                x.Configuration.Count.Should().BeGreaterThan(0);
+                x.Configuration.Should().HaveCountGreaterThan(0);
             });
         }
     }
