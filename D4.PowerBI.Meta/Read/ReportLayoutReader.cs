@@ -48,9 +48,9 @@ namespace D4.PowerBI.Meta.Read
             return rootElement.GetProperty("id").GetInt32();
         }
 
-        private static List<ConfigurableProperty> GetConfiguration(JsonElement rootElement)
+        private static List<ConfigurableProperty> GetConfiguration(JsonElement element)
         {
-            var config = rootElement.GetProperty(ReportLayoutDocument.Configuration);
+            var config = element.GetProperty(ReportLayoutDocument.Configuration);
             return JsonConfigurationReader.ReadPropertyConfigurationNode(config);
         }
 
@@ -59,23 +59,38 @@ namespace D4.PowerBI.Meta.Read
             var reportPages = rootElement.GetProperty(ReportLayoutDocument.PageArrayNode);
 
             var e = reportPages.EnumerateArray();
-            var pages = e.Select(x =>
+            return e.Select(x =>
             {
-                var page = new ReportPage
+                return new ReportPage
                 {
                     Name = x.GetProperty(ReportLayoutDocument.Name).GetString() ?? string.Empty,
                     DisplayName = x.GetProperty(ReportLayoutDocument.DisplayName).GetString() ?? string.Empty,
                     Ordinal = x.GetProperty(ReportLayoutDocument.Ordinal).GetInt32(),
-                    Width = x.GetProperty(ReportLayoutDocument.Width).GetInt32(),
-                    Height = x.GetProperty(ReportLayoutDocument.Height).GetInt32(),
+                    Width = x.GetProperty(ReportLayoutDocument.Width).GetDouble(),
+                    Height = x.GetProperty(ReportLayoutDocument.Height).GetDouble(),
                     DisplayOption = (DisplayOption)(x.GetProperty(ReportLayoutDocument.DisplayOption).GetInt32()),
-                    Configuration = JsonConfigurationReader.ReadPropertyConfigurationNode(x.GetProperty(ReportLayoutDocument.Configuration))
+                    Configuration = GetConfiguration(x),
+                    VisualElements = GetVisuals(x)
                 };
-
-                return page;
             }).ToList();
+        }
 
-            return pages;
+        private static List<VisualElement> GetVisuals(JsonElement element)
+        {
+            var visualsElements = element.GetProperty(ReportLayoutDocument.VisualContainers);
+
+            var e = visualsElements.EnumerateArray();
+            return e.Select(x =>
+            {
+                return new VisualElement
+                {
+                    Width = x.GetProperty(ReportLayoutDocument.Width).GetDouble(),
+                    Height = x.GetProperty(ReportLayoutDocument.Height).GetDouble(),
+                    X = x.GetProperty(ReportLayoutDocument.PosX).GetDouble(),
+                    Y = x.GetProperty(ReportLayoutDocument.PosY).GetDouble(),
+                    Z = x.GetProperty(ReportLayoutDocument.PosZ).GetDouble()
+                };
+            }).ToList();
         }
     }
 }

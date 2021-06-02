@@ -11,5 +11,9 @@
         public const string Height = "height";
         public const string DisplayOption = "displayOption";
         public const string Configuration = "config";
+        public const string VisualContainers = "visualContainers";
+        public const string PosX = "x";
+        public const string PosY = "y";
+        public const string PosZ = "z";
     }
 }

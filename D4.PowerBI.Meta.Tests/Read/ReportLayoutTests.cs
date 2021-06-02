@@ -44,8 +44,14 @@ namespace D4.PowerBI.Meta.Tests.Read
                 x.Width.Should().Be(1280);
                 x.Height.Should().Be(720);
                 x.DisplayOption.Should().Be(DisplayOption.SixteenByNine);
-                x.VisualElements.Should().NotBeNull();
+                x.VisualElements.Should().HaveCount(1);
                 x.Configuration.Should().HaveCountGreaterThan(0);
+
+                x.VisualElements[0].Width.Should().BeGreaterThan(0);
+                x.VisualElements[0].Height.Should().BeGreaterThan(0);
+                x.VisualElements[0].X.Should().BeGreaterOrEqualTo(0);
+                x.VisualElements[0].Y.Should().BeGreaterOrEqualTo(0);
+                x.VisualElements[0].Z.Should().BeGreaterOrEqualTo(0);
             });
         }
     }

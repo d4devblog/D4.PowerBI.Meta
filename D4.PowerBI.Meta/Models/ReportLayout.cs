@@ -28,9 +28,9 @@ namespace D4.PowerBI.Meta.Models
 
         public DisplayOption DisplayOption { get; set; } = DisplayOption.Unknown;
 
-        public int Width { get; set; }
+        public double Width { get; set; }
 
-        public int Height { get; set; }
+        public double Height { get; set; }
 
         public List<ConfigurableProperty> Configuration { get; set; } = new();
     }
@@ -47,7 +47,15 @@ namespace D4.PowerBI.Meta.Models
 
     public class VisualElement
     {
+        public double X { get; set; }
 
+        public double Y { get; set; }
+
+        public double Z { get; set; }
+
+        public double Width { get; set; }
+
+        public double Height { get; set; }
     }
 
     
