@@ -56,6 +56,8 @@ namespace D4.PowerBI.Meta.Models
         public double Width { get; set; }
 
         public double Height { get; set; }
+
+        public string Name { get; set; }
     }
 
     

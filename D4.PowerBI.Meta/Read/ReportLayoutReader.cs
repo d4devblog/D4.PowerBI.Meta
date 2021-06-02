@@ -82,8 +82,12 @@ namespace D4.PowerBI.Meta.Read
             var e = visualsElements.EnumerateArray();
             return e.Select(x =>
             {
+                var config = GetConfiguration(x);
+                var name = TryGetValueFromConfigurableProperties(config, new string[1] { "name" });
+
                 return new VisualElement
                 {
+                    Name = name?.ToString() ?? string.Empty,
                     Width = x.GetProperty(ReportLayoutDocument.Width).GetDouble(),
                     Height = x.GetProperty(ReportLayoutDocument.Height).GetDouble(),
                     X = x.GetProperty(ReportLayoutDocument.PosX).GetDouble(),
@@ -91,6 +95,25 @@ namespace D4.PowerBI.Meta.Read
                     Z = x.GetProperty(ReportLayoutDocument.PosZ).GetDouble()
                 };
             }).ToList();
+        }
+
+        private static object? TryGetValueFromConfigurableProperties(
+            List<ConfigurableProperty> configurableProperties, string[] paths)
+        {
+            ConfigurableProperty? selectedPropery = null;
+            foreach (var path in paths)
+            {
+                selectedPropery = configurableProperties.FirstOrDefault(x => x.Name == path);
+            }
+            
+            if (selectedPropery != null)
+            {
+                return selectedPropery.Value;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

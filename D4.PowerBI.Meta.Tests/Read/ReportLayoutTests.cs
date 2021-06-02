@@ -47,6 +47,7 @@ namespace D4.PowerBI.Meta.Tests.Read
                 x.VisualElements.Should().HaveCount(1);
                 x.Configuration.Should().HaveCountGreaterThan(0);
 
+                x.VisualElements[0].Name.Should().NotBeNullOrEmpty();
                 x.VisualElements[0].Width.Should().BeGreaterThan(0);
                 x.VisualElements[0].Height.Should().BeGreaterThan(0);
                 x.VisualElements[0].X.Should().BeGreaterOrEqualTo(0);
