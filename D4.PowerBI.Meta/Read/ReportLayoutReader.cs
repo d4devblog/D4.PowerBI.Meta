@@ -1,4 +1,5 @@
-﻿using D4.PowerBI.Meta.Constants;
+﻿using D4.PowerBI.Meta.Common;
+using D4.PowerBI.Meta.Constants;
 using D4.PowerBI.Meta.Exceptions;
 using D4.PowerBI.Meta.Models;
 using System.Collections.Generic;
@@ -36,7 +37,7 @@ namespace D4.PowerBI.Meta.Read
             {
                 Id = GetReportId(report.RootElement),
                 ReportPages = GetPages(report.RootElement),
-                Config = GetConfiguration(report.RootElement)
+                Configuration = GetConfiguration(report.RootElement)
             };
 
             return reportLayout;
@@ -47,12 +48,10 @@ namespace D4.PowerBI.Meta.Read
             return rootElement.GetProperty("id").GetInt32();
         }
 
-        private static ReportConfiguration GetConfiguration(JsonElement rootElement)
+        private static List<ConfigurableProperty> GetConfiguration(JsonElement rootElement)
         {
-            var config = rootElement.GetProperty(ReportLayoutDocument.ReportConfigNode);
-            var configJson = config.GetString();
-
-            return new ReportConfiguration();
+            var config = rootElement.GetProperty(ReportLayoutDocument.Configuration);
+            return JsonConfigurationReader.ReadPropertyConfigurationNode(config);
         }
 
         private static List<ReportPage> GetPages(JsonElement rootElement)
@@ -62,7 +61,18 @@ namespace D4.PowerBI.Meta.Read
             var e = reportPages.EnumerateArray();
             var pages = e.Select(x =>
             {
-                return new ReportPage();
+                var page = new ReportPage
+                {
+                    Name = x.GetProperty(ReportLayoutDocument.Name).GetString() ?? string.Empty,
+                    DisplayName = x.GetProperty(ReportLayoutDocument.DisplayName).GetString() ?? string.Empty,
+                    Ordinal = x.GetProperty(ReportLayoutDocument.Ordinal).GetInt32(),
+                    Width = x.GetProperty(ReportLayoutDocument.Width).GetInt32(),
+                    Height = x.GetProperty(ReportLayoutDocument.Height).GetInt32(),
+                    DisplayOption = (DisplayOption)(x.GetProperty(ReportLayoutDocument.DisplayOption).GetInt32()),
+                    Configuration = JsonConfigurationReader.ReadPropertyConfigurationNode(x.GetProperty(ReportLayoutDocument.Configuration))
+                };
+
+                return page;
             }).ToList();
 
             return pages;
