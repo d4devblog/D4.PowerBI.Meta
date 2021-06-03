@@ -84,10 +84,13 @@ namespace D4.PowerBI.Meta.Read
             {
                 var config = GetConfiguration(x);
                 var name = TryGetValueFromConfigurableProperties(config, new string[1] { "name" });
+                var visualType = TryGetValueFromConfigurableProperties(config, new string[2] { "singleVisual", "visualType" });
 
                 return new VisualElement
                 {
                     Name = name?.ToString() ?? string.Empty,
+                    VisualType = visualType?.ToString() ?? string.Empty,
+                    Configuration = config,
                     Width = x.GetProperty(ReportLayoutDocument.Width).GetDouble(),
                     Height = x.GetProperty(ReportLayoutDocument.Height).GetDouble(),
                     X = x.GetProperty(ReportLayoutDocument.PosX).GetDouble(),
@@ -100,15 +103,19 @@ namespace D4.PowerBI.Meta.Read
         private static object? TryGetValueFromConfigurableProperties(
             List<ConfigurableProperty> configurableProperties, string[] paths)
         {
-            ConfigurableProperty? selectedPropery = null;
-            foreach (var path in paths)
+            var p = paths.GetEnumerator();
+            var nextProperty = new ConfigurableProperty { ChildProperties = configurableProperties };
+            while (p.MoveNext())
             {
-                selectedPropery = configurableProperties.FirstOrDefault(x => x.Name == path);
+                if (nextProperty != null && nextProperty.ChildProperties.Count > 0)
+                {
+                    nextProperty = nextProperty.ChildProperties.FirstOrDefault(x => x.Name == p.Current.ToString());
+                }
             }
             
-            if (selectedPropery != null)
+            if (nextProperty != null && nextProperty.Name == paths.Last())
             {
-                return selectedPropery.Value;
+                return nextProperty.Value;
             }
             else
             {
