@@ -15,5 +15,8 @@
         public const string PosX = "x";
         public const string PosY = "y";
         public const string PosZ = "z";
+        public const string SingleVisual = "singleVisual";
+        public const string VisualType = "visualType";
+        public const string Id = "id";
     }
 }

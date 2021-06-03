@@ -12,6 +12,9 @@ namespace D4.PowerBI.Meta.Read
 {
     public static class ReportLayoutReader
     {
+        private static readonly string[] _visualNameNodePath = { ReportLayoutDocument.Name };
+        private static readonly string[] _visualTypeNodePath = { ReportLayoutDocument.SingleVisual, ReportLayoutDocument.VisualType };
+
         public static ReportLayout ReadReportLayout(this PBIFile pbiFile)
         {
             var reportLayoutFile = pbiFile.ArchiveEntries
@@ -19,7 +22,7 @@ namespace D4.PowerBI.Meta.Read
 
             if (reportLayoutFile == null)
             {
-                throw new ContentNotFoundException("Unavle to read Report Layout content.");
+                throw new ContentNotFoundException("Unable to read Report Layout content.");
             }
 
             var reader = new StreamReader(reportLayoutFile.Open(), Encoding.Unicode);
@@ -83,8 +86,8 @@ namespace D4.PowerBI.Meta.Read
             return e.Select(x =>
             {
                 var config = GetConfiguration(x);
-                var name = TryGetValueFromConfigurableProperties(config, new string[1] { "name" });
-                var visualType = TryGetValueFromConfigurableProperties(config, new string[2] { "singleVisual", "visualType" });
+                config.TryGetValue(_visualNameNodePath, out var name);
+                config.TryGetValue(_visualTypeNodePath, out var visualType);
 
                 return new VisualElement
                 {
@@ -98,29 +101,6 @@ namespace D4.PowerBI.Meta.Read
                     Z = x.GetProperty(ReportLayoutDocument.PosZ).GetDouble()
                 };
             }).ToList();
-        }
-
-        private static object? TryGetValueFromConfigurableProperties(
-            List<ConfigurableProperty> configurableProperties, string[] paths)
-        {
-            var p = paths.GetEnumerator();
-            var nextProperty = new ConfigurableProperty { ChildProperties = configurableProperties };
-            while (p.MoveNext())
-            {
-                if (nextProperty != null && nextProperty.ChildProperties.Count > 0)
-                {
-                    nextProperty = nextProperty.ChildProperties.FirstOrDefault(x => x.Name == p.Current.ToString());
-                }
-            }
-            
-            if (nextProperty != null && nextProperty.Name == paths.Last())
-            {
-                return nextProperty.Value;
-            }
-            else
-            {
-                return null;
-            }
         }
     }
 }
