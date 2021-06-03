@@ -5,19 +5,19 @@ using Xunit;
 
 namespace D4.PowerBI.Meta.Tests.ModelExtensions
 {
-    public class VisualElementTests
+    public class ReportPageTests
     {
         [Fact]
         public void WHEN_no_config_settings_exist_THEN_get_formatting_returns_null()
         {
-            var sut = new VisualElement
+            var sut = new ReportPage
             {
-                Name = "Test-Element",
-                VisualType = "TestVisual",
+                Name = "Test-Page",
+                DisplayName = "Page Name",
                 Configuration = new List<ConfigurableProperty>()
             };
 
-            var result = sut.TryGetVisualFormatting(out var resultValue);
+            var result = sut.TryGetPageFormatting(out var resultValue);
 
             result.Should().BeFalse();
             resultValue.Should().BeNull();
@@ -26,17 +26,17 @@ namespace D4.PowerBI.Meta.Tests.ModelExtensions
         [Fact]
         public void WHEN_incorrect_config_settings_exist_THEN_get_formatting_returns_null()
         {
-            var sut = new VisualElement
+            var sut = new ReportPage
             {
-                Name = "Test-Element",
-                VisualType = "TestVisual",
+                Name = "Test-Page",
+                DisplayName = "Page Name",
                 Configuration = new List<ConfigurableProperty>
                 {
                     new ConfigurableProperty{ Name = "not-formatting", Value = 123 }
                 }
             };
 
-            var result = sut.TryGetVisualFormatting(out var resultValue);
+            var result = sut.TryGetPageFormatting(out var resultValue);
 
             result.Should().BeFalse();
             resultValue.Should().BeNull();
@@ -57,32 +57,23 @@ namespace D4.PowerBI.Meta.Tests.ModelExtensions
                 ChildProperties = styleProperties
             };
 
-            var visualNode = new ConfigurableProperty
-            {
-                Name = "singleVisual",
-                ChildProperties = new List<ConfigurableProperty>
-                {
-                    objectsNode
-                }
-            };
-
             var anotherRootNode = new ConfigurableProperty
             {
                 Name = "another-root"
             };
 
-            var sut = new VisualElement
+            var sut = new ReportPage
             {
-                Name = "Test-Element",
-                VisualType = "TestVisual",
+                Name = "Test-Page",
+                DisplayName = "Page Name",
                 Configuration = new List<ConfigurableProperty>
                 {
-                    visualNode,
+                    objectsNode,
                     anotherRootNode
                 }
             };
 
-            var result = sut.TryGetVisualFormatting(out var resultValue);
+            var result = sut.TryGetPageFormatting(out var resultValue);
 
             result.Should().BeTrue();
             resultValue.Should().BeEquivalentTo(styleProperties);

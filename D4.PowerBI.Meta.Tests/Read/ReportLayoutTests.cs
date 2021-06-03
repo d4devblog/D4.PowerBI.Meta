@@ -34,10 +34,19 @@ namespace D4.PowerBI.Meta.Tests.Read
             reportLayout.ReportPages[0].Name.Should().Be("ReportSection");
             reportLayout.ReportPages[0].DisplayName.Should().Be("Page With Shape");
             reportLayout.ReportPages[0].Ordinal.Should().Be(0);
+            reportLayout.ReportPages[0]
+                .TryGetPageFormatting(out var pageOneFormatting)
+                .Should().BeTrue();
 
             reportLayout.ReportPages[1].Name.Should().Be("ReportSection8ce75128eea8b556229d");
             reportLayout.ReportPages[1].DisplayName.Should().Be("Page With Text");
             reportLayout.ReportPages[1].Ordinal.Should().Be(1);
+            reportLayout.ReportPages[1]
+                .TryGetPageFormatting(out var pageTwoFormatting)
+                .Should().BeTrue();
+
+            pageOneFormatting.Should().HaveCountGreaterThan(0);
+            pageTwoFormatting.Should().HaveCountGreaterThan(0);
 
             reportLayout.ReportPages.ForEach(x =>
             {
