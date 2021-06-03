@@ -41,20 +41,20 @@ namespace D4.PowerBI.Meta.Tests.Read
 
             reportLayout.ReportPages.ForEach(x =>
             {
-                x.Width.Should().Be(1280);
-                x.Height.Should().Be(720);
-                x.DisplayOption.Should().Be(DisplayOption.SixteenByNine);
+                x.Size.Width.Should().Be(1280);
+                x.Size.Height.Should().Be(720);
+                x.DisplayOption.Should().Be(ReportPageDisplayOption.SixteenByNine);
                 x.VisualElements.Should().HaveCount(1);
                 x.Configuration.Should().HaveCountGreaterThan(0);
 
                 x.VisualElements[0].Name.Should().BeOneOf("ead243d7cba56d441a8a", "acc05e753689024961e8");
                 x.VisualElements[0].VisualType.Should().BeOneOf("shape", "textbox");
                 x.VisualElements[0].Configuration.Should().HaveCountGreaterThan(0);
-                x.VisualElements[0].Width.Should().BeGreaterThan(0);
-                x.VisualElements[0].Height.Should().BeGreaterThan(0);
-                x.VisualElements[0].X.Should().BeGreaterOrEqualTo(0);
-                x.VisualElements[0].Y.Should().BeGreaterOrEqualTo(0);
-                x.VisualElements[0].Z.Should().BeGreaterOrEqualTo(0);
+                x.VisualElements[0].Size.Width.Should().BeGreaterThan(0);
+                x.VisualElements[0].Size.Height.Should().BeGreaterThan(0);
+                x.VisualElements[0].Location.X.Should().BeGreaterThan(0);
+                x.VisualElements[0].Location.Y.Should().BeGreaterThan(0);
+                x.VisualElements[0].Location.Z.Should().BeGreaterOrEqualTo(0);
             });
         }
     }

@@ -69,9 +69,12 @@ namespace D4.PowerBI.Meta.Read
                     Name = x.GetProperty(ReportLayoutDocument.Name).GetString() ?? string.Empty,
                     DisplayName = x.GetProperty(ReportLayoutDocument.DisplayName).GetString() ?? string.Empty,
                     Ordinal = x.GetProperty(ReportLayoutDocument.Ordinal).GetInt32(),
-                    Width = x.GetProperty(ReportLayoutDocument.Width).GetDouble(),
-                    Height = x.GetProperty(ReportLayoutDocument.Height).GetDouble(),
-                    DisplayOption = (DisplayOption)(x.GetProperty(ReportLayoutDocument.DisplayOption).GetInt32()),
+                    Size = new Size
+                    {
+                        Width = x.GetProperty(ReportLayoutDocument.Width).GetDouble(),
+                        Height = x.GetProperty(ReportLayoutDocument.Height).GetDouble(),
+                    },
+                    DisplayOption = (ReportPageDisplayOption)(x.GetProperty(ReportLayoutDocument.DisplayOption).GetInt32()),
                     Configuration = GetConfiguration(x),
                     VisualElements = GetVisuals(x)
                 };
@@ -94,11 +97,17 @@ namespace D4.PowerBI.Meta.Read
                     Name = name?.ToString() ?? string.Empty,
                     VisualType = visualType?.ToString() ?? string.Empty,
                     Configuration = config,
-                    Width = x.GetProperty(ReportLayoutDocument.Width).GetDouble(),
-                    Height = x.GetProperty(ReportLayoutDocument.Height).GetDouble(),
-                    X = x.GetProperty(ReportLayoutDocument.PosX).GetDouble(),
-                    Y = x.GetProperty(ReportLayoutDocument.PosY).GetDouble(),
-                    Z = x.GetProperty(ReportLayoutDocument.PosZ).GetDouble()
+                    Size = new Size
+                    {
+                        Width = x.GetProperty(ReportLayoutDocument.Width).GetDouble(),
+                        Height = x.GetProperty(ReportLayoutDocument.Height).GetDouble()
+                    },
+                    Location = new Location
+                    {
+                        X = x.GetProperty(ReportLayoutDocument.PosX).GetDouble(),
+                        Y = x.GetProperty(ReportLayoutDocument.PosY).GetDouble(),
+                        Z = x.GetProperty(ReportLayoutDocument.PosZ).GetDouble()
+                    }
                 };
             }).ToList();
         }
