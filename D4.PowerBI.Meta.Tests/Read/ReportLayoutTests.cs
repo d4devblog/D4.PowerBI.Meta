@@ -55,6 +55,11 @@ namespace D4.PowerBI.Meta.Tests.Read
                 x.VisualElements[0].Location.X.Should().BeGreaterThan(0);
                 x.VisualElements[0].Location.Y.Should().BeGreaterThan(0);
                 x.VisualElements[0].Location.Z.Should().BeGreaterOrEqualTo(0);
+
+                x.VisualElements[0].TryGetVisualFormatting(out var formattingProperties)
+                    .Should().BeTrue();
+
+                formattingProperties.Should().HaveCountGreaterThan(0);
             });
         }
     }

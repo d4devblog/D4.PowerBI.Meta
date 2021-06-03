@@ -18,5 +18,6 @@
         public const string SingleVisual = "singleVisual";
         public const string VisualType = "visualType";
         public const string Id = "id";
+        public const string Objects = "objects";
     }
 }
