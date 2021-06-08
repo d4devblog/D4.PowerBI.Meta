@@ -48,8 +48,8 @@ namespace D4.PowerBI.Meta.Tests
         }
 
         [Theory]
-        [InlineData("pbix/empty.pbix")]
-        [InlineData("pbix/empty.pbit")]
+        [InlineData("pbix/_empty.pbix")]
+        [InlineData("pbix/_empty.pbit")]
         public void WHEN_path_resolves_to_a_pbix_or_pbit_THEN_the_file_is_read_and_pbi_file_object_returned(string filename)
         {
             var fullPath = Path.Combine(_testFilePath, filename);
@@ -62,8 +62,8 @@ namespace D4.PowerBI.Meta.Tests
         }
 
         [Theory]
-        [InlineData("pbix/empty.pbix")]
-        [InlineData("pbix/empty.pbit")]
+        [InlineData("pbix/_empty.pbix")]
+        [InlineData("pbix/_empty.pbit")]
         public async Task WHEN_path_resolves_to_a_pbix_or_pbit_THEN_the_file_is_read_async_nd_pbi_file_object_returned(string filename)
         {
             var fullPath = Path.Combine(_testFilePath, filename);
@@ -121,8 +121,8 @@ namespace D4.PowerBI.Meta.Tests
         }
 
         [Theory]
-        [InlineData("pbix/empty.pbix")]
-        [InlineData("pbix/empty.pbit")]
+        [InlineData("pbix/_empty.pbix")]
+        [InlineData("pbix/_empty.pbit")]
         public void WHEN_stream_contains_pbix_or_pbit_data_THEN_the_file_is_read_and_pbi_file_object_returned(string filename)
         {
             var fullPath = Path.Combine(_testFilePath, filename);
@@ -138,8 +138,8 @@ namespace D4.PowerBI.Meta.Tests
         }
 
         [Theory]
-        [InlineData("pbix/empty.pbix")]
-        [InlineData("pbix/empty.pbit")]
+        [InlineData("pbix/_empty.pbix")]
+        [InlineData("pbix/_empty.pbit")]
         public async Task WHEN_stream_contains_pbix_or_pbit_data_THEN_the_file_is_read_async_and_pbi_file_object_returned(string filename)
         {
             var fullPath = Path.Combine(_testFilePath, filename);

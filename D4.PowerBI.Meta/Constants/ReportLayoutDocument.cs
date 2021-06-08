@@ -19,5 +19,6 @@
         public const string VisualType = "visualType";
         public const string Id = "id";
         public const string Objects = "objects";
+        public const string VcObjects = "vcObjects";
     }
 }

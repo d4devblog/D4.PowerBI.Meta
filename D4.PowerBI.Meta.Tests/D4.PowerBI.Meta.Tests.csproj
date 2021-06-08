@@ -6,17 +6,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="PBIX\empty.pbit" />
-    <None Remove="PBIX\empty.pbix" />
+    <None Remove="PBIX\basicVisualsWithSinpleFormatting.pbix" />
     <None Remove="PBIX\fixedDataWithDataLayout.pbix" />
     <None Remove="PBIX\reportPagesWithShapes.pbix" />
+    <None Remove="PBIX\_empty.pbit" />
+    <None Remove="PBIX\_empty.pbix" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="PBIX\empty.pbit">
+    <Content Include="PBIX\basicVisualsWithSinpleFormatting.pbix">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="PBIX\empty.pbix">
+    <Content Include="PBIX\_empty.pbit">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PBIX\_empty.pbix">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="PBIX\fixedDataWithDataLayout.pbix">

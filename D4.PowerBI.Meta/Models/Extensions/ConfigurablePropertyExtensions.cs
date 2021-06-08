@@ -5,6 +5,46 @@ namespace D4.PowerBI.Meta.Models
 {
     public static class ConfigurablePropertyExtensions
     {
+        private static readonly string[] _litteralExpressionNodes = { "expr", "Literal" };
+        private static readonly string[] _litteralValueNodes = { "Literal", "Value" };
+        private static readonly string[] _themeExpressionNodes = { "expr", "ThemeDataColor" };
+        private static readonly string[] _solodColourNodes = { "solid", "color" };
+
+        public static ConfigurablePropertyType GetPropertyType(this ConfigurableProperty property)
+        {
+            var type = ConfigurablePropertyType.unknown;
+            if (property.ChildProperties.Any())
+            {
+                var isLiteralExpression = property.ChildProperties.TryGetProperty(_litteralExpressionNodes, out _);
+                var isThemeColourExpression = property.ChildProperties.TryGetProperty(_themeExpressionNodes, out _);
+                var isSolidColourExpression = property.ChildProperties.TryGetProperty(_solodColourNodes, out _);
+
+                type = isLiteralExpression 
+                    ? ConfigurablePropertyType.literalExpression 
+                    : isThemeColourExpression
+                        ? ConfigurablePropertyType.themeDataColorExpression
+                        : isSolidColourExpression
+                            ? ConfigurablePropertyType.solidColor
+                            : ConfigurablePropertyType.unknown;
+            }
+
+            return type;
+        }
+
+        public static object? GetLiteralObjectValue(this ConfigurableProperty property)
+        {
+            if (property.ChildProperties.TryGetProperty(_litteralExpressionNodes, out var expression))
+            {
+                if (expression != null 
+                    && expression.TryGetProperty(_litteralValueNodes, out var expressionValue))
+                {
+                    return expressionValue?.Value;
+                }
+            }
+
+            return null;
+        } 
+
         public static bool TryGetProperty(this ConfigurableProperty property,
             string[] nodes, out ConfigurableProperty? value)
         {

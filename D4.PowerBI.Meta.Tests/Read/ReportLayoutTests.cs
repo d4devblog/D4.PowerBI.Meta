@@ -1,6 +1,7 @@
 ﻿using D4.PowerBI.Meta.Models;
 using D4.PowerBI.Meta.Read;
 using FluentAssertions;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -70,6 +71,57 @@ namespace D4.PowerBI.Meta.Tests.Read
 
                 formattingProperties.Should().HaveCountGreaterThan(0);
             });
+        }
+
+        [Theory]
+        [InlineData("pbix/basicVisualsWithSinpleFormatting.pbix")]
+        public async Task WHEN_file_supplied_THEN_all_visual_formatting_can_be_read(
+            string filename)
+        {
+            var fullPath = Path.Combine(_testFilePath, filename);
+
+            var sut = await PBIReader.OpenFileAsync(fullPath);
+            var reportLayout = sut.ReadReportLayout();
+
+            reportLayout.Should().NotBeNull();
+
+            reportLayout.ReportPages.Should().HaveCount(1);
+            var visuals = reportLayout.ReportPages[0].VisualElements;
+
+            visuals.Should().HaveCount(5);
+            var textBoxes = visuals.FindAll(x => x.VisualType == "textbox");
+            var cards = visuals.FindAll(x => x.VisualType == "card");
+            var barChart = visuals.Find(x => x.VisualType == "clusteredBarChart");
+
+            textBoxes.Should().HaveCount(2);
+            cards.Should().HaveCount(2);
+            barChart.Should().NotBeNull();
+
+            var barChartFormatting = new List<ConfigurableProperty>();
+            var foundFormatting = barChart?.TryGetVisualFormatting(out barChartFormatting);
+
+            foundFormatting.Should().BeTrue();
+            barChartFormatting.Should().NotBeNull();
+            barChartFormatting?.Count.Should().BeGreaterThan(0);
+
+            if (barChartFormatting != null && barChartFormatting.TryGetProperty(new string[3] 
+                { "labels", "properties", "backgroundColor" }
+                , out var labelBackground))
+            {
+                labelBackground.Should().NotBeNull();
+                labelBackground?.ChildProperties.Should().HaveCountGreaterThan(0);
+                labelBackground?.GetPropertyType()
+                                .Should()
+                                .Be(ConfigurablePropertyType.solidColor);
+            }
+
+            if (barChartFormatting != null && barChartFormatting.TryGetProperty(new string[3]
+                { "background", "properties", "show" }
+                , out var backgroundShow))
+            {
+                backgroundShow.Should().NotBeNull();
+                backgroundShow?.ChildProperties.Should().HaveCountGreaterThan(0);
+            }
         }
     }
 }

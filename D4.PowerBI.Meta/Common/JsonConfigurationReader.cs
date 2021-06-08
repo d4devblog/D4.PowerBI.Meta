@@ -64,26 +64,50 @@ namespace D4.PowerBI.Meta.Common
                             newProperty.Value = false;
                             break;
                         case JsonValueKind.Array:
-                            var array = new object[nextElement.Current.Value.GetArrayLength()];
+                            var valueArray = new object[nextElement.Current.Value.GetArrayLength()];
+                            var childProperties = new List<ConfigurableProperty>();
+
                             var arrayItem = nextElement.Current.Value.EnumerateArray();
 
-                            int i = 0;
+                            var i = 0;
+                            var isValueType = false;
+
                             while (arrayItem.MoveNext())
                             {
+
+                                //value kind can be object here...
+                                //so we would want to add to the child items and not VALUES!! string/number array
+
+
                                 switch (arrayItem.Current.ValueKind)
                                 {
+                                    case JsonValueKind.Object:
+                                        isValueType = false;
+                                        childProperties.AddRange(AddChildProperties(new List<ConfigurableProperty>(), arrayItem.Current));
+                                        break;
                                     case JsonValueKind.String:
-                                        array[i] = arrayItem.Current.GetString() ?? "";
+                                        isValueType = true;
+                                        valueArray[i] = arrayItem.Current.GetString() ?? "";
                                         break;
                                     case JsonValueKind.Number:
-                                        array[i] = arrayItem.Current.GetDecimal();
+                                        isValueType = true;
+                                        valueArray[i] = arrayItem.Current.GetDecimal();
                                         break;
                                     default: break;
                                 }
 
                                 i++;
                             }
-                            newProperty.Value = array;
+
+                            if (isValueType)
+                            {
+                                newProperty.Value = valueArray;
+                            }
+                            else
+                            {
+                                newProperty.ChildProperties = childProperties;
+                            }
+
                             break;
                         default:
                             break;

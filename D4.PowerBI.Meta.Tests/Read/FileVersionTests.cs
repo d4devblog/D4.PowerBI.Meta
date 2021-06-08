@@ -17,8 +17,8 @@ namespace D4.PowerBI.Meta.Tests.Read
         }
 
         [Theory]
-        [InlineData("pbix/empty.pbix", "1.22")]
-        [InlineData("pbix/empty.pbit", "1.22")]
+        [InlineData("pbix/_empty.pbix", "1.22")]
+        [InlineData("pbix/_empty.pbit", "1.22")]
         public async Task WHEN_pbi_file_is_read_THEN_expected_file_version_is_returned(
             string filename, string expectedVersion)
         {

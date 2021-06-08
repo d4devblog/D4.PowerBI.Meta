@@ -91,5 +91,37 @@ namespace D4.PowerBI.Meta.Tests.Common
             properties[0].ChildProperties[1].Raw.Should().NotBeEmpty();
             properties[0].ChildProperties[1].ChildProperties.Should().HaveCount(0);
         }
+
+        [Fact]
+        public void WHEN_object_contains_array_of_objects_THEN_all_child_properties_are_returned()
+        {
+            var rawJson = "{ \"parentObject\": [{\"childStringProperty\": \"abc\"}, {\"childStringProperty\": \"def\"}] }";
+            var config = new JsonConfigTestObject
+            {
+                Config = rawJson
+            };
+
+            var document = JsonDocument.Parse(JsonSerializer.Serialize(config));
+            var configElement = document.RootElement.GetProperty(ReportLayoutDocument.Configuration);
+
+            var properties = JsonConfigurationReader.ReadPropertyConfigurationNode(configElement);
+            properties.Should().NotBeNull();
+            properties.Should().HaveCount(1);
+
+            properties[0].Name.Should().Be("parentObject");
+            properties[0].Value.Should().BeNull();
+            properties[0].Raw.Should().NotBeEmpty();
+            properties[0].ChildProperties.Should().HaveCount(2);
+
+            properties[0].ChildProperties[0].Name.Should().Be("childStringProperty");
+            properties[0].ChildProperties[0].Value.Should().Be("abc");
+            properties[0].ChildProperties[0].Raw.Should().NotBeEmpty();
+            properties[0].ChildProperties[0].ChildProperties.Should().HaveCount(0);
+
+            properties[0].ChildProperties[1].Name.Should().Be("childStringProperty");
+            properties[0].ChildProperties[1].Value.Should().Be("def");
+            properties[0].ChildProperties[1].Raw.Should().NotBeEmpty();
+            properties[0].ChildProperties[1].ChildProperties.Should().HaveCount(0);
+        }
     }
 }

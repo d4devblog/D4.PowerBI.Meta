@@ -250,5 +250,104 @@ namespace D4.PowerBI.Meta.Tests.ModelExtensions
             tryResult.Should().BeFalse();
             valueResult.Should().BeNull();
         }
+
+        [Fact]
+        public void WHEN_property_contains_a_litteral_expression_THEN_type_is_returned_AND_value_can_be_read()
+        {
+            var sut = new ConfigurableProperty
+            {
+                Name = "propertyWithExpression"
+            };
+
+            sut.ChildProperties.Add(new ConfigurableProperty
+            {
+                Name = "expr",
+                ChildProperties = new List<ConfigurableProperty>
+                {
+                    new ConfigurableProperty
+                    {
+                        Name = "Literal",
+                        ChildProperties = new List<ConfigurableProperty>
+                        {
+                            new ConfigurableProperty
+                            {
+                                Name = "Value",
+                                Value = "The-Actual-Value"
+                            }
+                        }
+                    }
+                }
+            });
+
+            var propertyType = sut.GetPropertyType();
+            propertyType.Should().Be(ConfigurablePropertyType.literalExpression);
+
+            var propertyValue = sut.GetLiteralObjectValue();
+            propertyValue.Should().Be("The-Actual-Value");
+        }
+
+        [Fact]
+        public void WHEN_property_contains_a_theme_colour_expression_THEN_type_is_returned()
+        {
+            var sut = new ConfigurableProperty
+            {
+                Name = "propertyWithExpression"
+            };
+
+            sut.ChildProperties.Add(new ConfigurableProperty
+            {
+                Name = "expr",
+                ChildProperties = new List<ConfigurableProperty>
+                {
+                    new ConfigurableProperty
+                    {
+                        Name = "ThemeDataColor",
+                        ChildProperties = new List<ConfigurableProperty>
+                        {
+                            new ConfigurableProperty
+                            {
+                                Name = "ColorId",
+                                Value = "1"
+                            }
+                        }
+                    }
+                }
+            });
+
+            var propertyType = sut.GetPropertyType();
+            propertyType.Should().Be(ConfigurablePropertyType.themeDataColorExpression);
+        }
+
+        [Fact]
+        public void WHEN_property_contains__a_solid_colour_THEN_type_is_returned()
+        {
+            var sut = new ConfigurableProperty
+            {
+                Name = "propertyWithExpression"
+            };
+
+            sut.ChildProperties.Add(new ConfigurableProperty
+            {
+                Name = "solid",
+                ChildProperties = new List<ConfigurableProperty>
+                {
+                    new ConfigurableProperty
+                    {
+                        Name = "color",
+                        ChildProperties = new List<ConfigurableProperty>
+                        {
+                            new ConfigurableProperty
+                            {
+                                Name = "black",
+                                Value = "000"
+                            }
+                        }
+                    }
+                }
+            });
+
+            var propertyType = sut.GetPropertyType();
+            propertyType.Should().Be(ConfigurablePropertyType.solidColor);
+        }
     }
 }
