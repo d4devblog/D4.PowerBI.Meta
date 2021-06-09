@@ -13,5 +13,10 @@ namespace D4.PowerBI.Meta.Models
         public Location Location { get; set; } = new();
 
         public Size Size { get; set; } = new();
+
+        //filters
+
+        //data fields
+            //+ query expressions
     }
 }

@@ -1,12 +1,14 @@
 ﻿using D4.PowerBI.Meta.Models;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 
+[assembly: InternalsVisibleTo("D4.PowerBI.Meta.Tests")]
 namespace D4.PowerBI.Meta.Common
 {
-    public static class JsonConfigurationReader
+    internal static class JsonConfigurationReader
     {
-        public static List<ConfigurableProperty> ReadPropertyConfigurationNode(
+        internal static List<ConfigurableProperty> ReadPropertyConfigurationNode(
             JsonElement element)
         {
             var properties = new List<ConfigurableProperty>();
@@ -74,11 +76,6 @@ namespace D4.PowerBI.Meta.Common
 
                             while (arrayItem.MoveNext())
                             {
-
-                                //value kind can be object here...
-                                //so we would want to add to the child items and not VALUES!! string/number array
-
-
                                 switch (arrayItem.Current.ValueKind)
                                 {
                                     case JsonValueKind.Object:

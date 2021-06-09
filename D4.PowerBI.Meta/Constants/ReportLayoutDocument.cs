@@ -20,5 +20,6 @@
         public const string Id = "id";
         public const string Objects = "objects";
         public const string VcObjects = "vcObjects";
+        public const string Filters = "filters";
     }
 }
