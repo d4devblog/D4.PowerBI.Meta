@@ -21,5 +21,12 @@
         public const string Objects = "objects";
         public const string VcObjects = "vcObjects";
         public const string Filters = "filters";
+        public const string Expression = "expression";
+        public const string FilterColumn = "Column";
+        public const string FilterExpression = "Expression";
+        public const string FilterSourceRef = "SourceRef";
+        public const string FilterEntity = "Entity";
+        public const string FilterProperty = "Property";
+        public const string Type = "type";
     }
 }
