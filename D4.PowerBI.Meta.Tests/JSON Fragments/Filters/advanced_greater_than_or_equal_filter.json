@@ -1,0 +1,20 @@
+﻿[
+  {
+    "name": "GreaterThanOrEqualTo",
+    "expression": {
+    },
+    "filter": {
+      "From": [],
+      "Where": [
+        {
+          "Condition": {
+            "Comparison": {
+              "ComparisonKind": 2
+            }
+          }
+        }
+      ]
+    },
+    "type": "Advanced"
+  }
+]

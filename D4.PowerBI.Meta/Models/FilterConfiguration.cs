@@ -66,7 +66,6 @@ namespace D4.PowerBI.Meta.Models
         IsNot = 6,
         IsBlank = 7,
         IsNotBlank = 8,
-        TopN_Asc = 9,
-        TopN_Dsc = 10
+        TopN = 9
     }
 }

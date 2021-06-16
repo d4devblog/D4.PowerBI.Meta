@@ -1,0 +1,11 @@
+﻿[
+  {
+    "name": "topn",
+    "expression": {
+    },
+    "filter": {
+      "From": []
+    },
+    "type": "TopN"
+  }
+]

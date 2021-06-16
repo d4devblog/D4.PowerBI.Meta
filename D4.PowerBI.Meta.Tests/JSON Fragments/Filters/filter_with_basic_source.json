@@ -1,0 +1,15 @@
+[
+  {
+    "name": "Filter1",
+    "expression": {
+      "Column": {
+        "Expression": {
+          "SourceRef": {
+            "Entity": "TableName"
+          }
+        },
+        "Property": "FieldName"
+      }
+    }
+  }
+]

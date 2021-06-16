@@ -2,7 +2,9 @@
 using D4.PowerBI.Meta.Constants;
 using D4.PowerBI.Meta.Models;
 using FluentAssertions;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Xunit;
@@ -11,6 +13,14 @@ namespace D4.PowerBI.Meta.Tests.Common
 {
     public class JsonFilterReaderTests
     {
+        private readonly string _testFilePath = string.Empty;
+
+        public JsonFilterReaderTests()
+        {
+            var root = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
+            _testFilePath = Path.Combine(root, "JSON Fragments", "Filters");
+        }
+
         public class JsonFilterTestObject
         {
             [JsonPropertyName("filters")]
@@ -59,13 +69,12 @@ namespace D4.PowerBI.Meta.Tests.Common
         [Fact]
         public void WHEN_json_filter_contains_source_THEN_source_is_mapped()
         {
-            var json = "[{\"name\": \"Filter1\",\"expression\": {\"Column\": {" +
-                        "\"Expression\": {\"SourceRef\": {\"Entity\": \"TableName\"" + 
-                            "}},\"Property\": \"FieldName\"}}}]";
+            var fullPath = Path.Combine(_testFilePath, "filter_with_basic_source.json");
+            var jsonText = File.ReadAllText(fullPath);
 
             var filtersTestObject = new JsonFilterTestObject
             {
-                Filters = json
+                Filters = jsonText
             };
 
             var document = JsonDocument.Parse(JsonSerializer.Serialize(filtersTestObject));
@@ -80,14 +89,22 @@ namespace D4.PowerBI.Meta.Tests.Common
         }
 
         [Theory]
-        [InlineData("[{ \"name\": \"filter1\" } ]", FilterType.Unknown)]
-        [InlineData("[{ \"name\": \"basicFilter\", \"type\": \"Categorical\" } ]", FilterType.BasicCategorical)]
+        [InlineData("unknown_filter.json", FilterType.Unknown)]
+        [InlineData("basic_categorical_filter.json", FilterType.BasicCategorical)]
+        [InlineData("advanced_greater_than_filter.json", FilterType.IsGreaterThan)]
+        [InlineData("advanced_greater_than_or_equal_filter.json", FilterType.IsGreaterThanOrEqualTo)]
+        [InlineData("advanced_less_than_filter.json", FilterType.IsLessThan)]
+        [InlineData("advanced_less_than_or_equal_filter.json", FilterType.IsLessThanOrEqualTo)]
+        [InlineData("top_n_filter.json", FilterType.TopN)]
         public void WHEN_json_filter_is_read_THEN_correct_type_is_returned(
-            string json, FilterType expectedType)
+            string jsonFile, FilterType expectedType)
         {
+            var fullPath = Path.Combine(_testFilePath, jsonFile);
+            var jsonText = File.ReadAllText(fullPath);
+
             var filtersTestObject = new JsonFilterTestObject
             {
-                Filters = json
+                Filters = jsonText
             };
 
             var document = JsonDocument.Parse(JsonSerializer.Serialize(filtersTestObject));

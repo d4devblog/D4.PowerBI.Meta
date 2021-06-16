@@ -1,0 +1,20 @@
+﻿[
+  {
+    "name": "LessThan",
+    "expression": {
+    },
+    "filter": {
+      "From": [],
+      "Where": [
+        {
+          "Condition": {
+            "Comparison": {
+              "ComparisonKind": 3
+            }
+          }
+        }
+      ]
+    },
+    "type": "Advanced"
+  }
+]

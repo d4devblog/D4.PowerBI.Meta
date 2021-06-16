@@ -87,14 +87,53 @@ namespace D4.PowerBI.Meta.Common
         {
             var filterType = FilterType.Unknown;
 
-            //var f1 = element.GetChild("filter");
-            //var typeProperty = element.GetChild(ReportLayoutDocument.Type);
-
             var typeProperty = element.GetPropertyString(ReportLayoutDocument.Type);
+            if (typeProperty == null)
+            {
+                return filterType;
+            }
 
-            if (typeProperty != null && typeProperty == "Categorical")
+            if (string.Compare(typeProperty, "Categorical", true) == 0)
             {
                 filterType = FilterType.BasicCategorical;
+            }
+            else if (string.Compare(typeProperty, "TopN", true) == 0)
+            {
+                filterType = FilterType.TopN;
+            }
+            else if (string.Compare(typeProperty, "Advanced", true) == 0)
+            {
+                var whereArray = element.GetChild(ReportLayoutDocument.Filter)
+                    ?.GetChild(ReportLayoutDocument.FilterWhere);
+
+                if (whereArray != null && whereArray.Value.ValueKind == JsonValueKind.Array)
+                {
+                    var whereEnumerator = whereArray.Value.EnumerateArray();
+                    whereEnumerator.MoveNext();
+
+                    var comparisonKind = whereEnumerator.Current
+                        .GetChild(ReportLayoutDocument.FilterCondition)
+                        ?.GetChild(ReportLayoutDocument.FilterComparison)
+                        ?.GetChild(ReportLayoutDocument.FilterComparisonKind);
+
+                    if (comparisonKind.HasValue &&
+                        comparisonKind.Value.ValueKind == JsonValueKind.Number)
+                    {
+                        var kind = comparisonKind.Value.GetInt32();
+                        filterType = kind switch
+                        {
+                            1 => FilterType.IsGreaterThan,
+
+                            2 => FilterType.IsGreaterThanOrEqualTo,
+
+                            3 => FilterType.IsLessThan,
+
+                            4 => FilterType.IsLessThanOrEqualTo,
+
+                            _ => FilterType.Unknown
+                        };
+                    }
+                }
             }
 
             return filterType;

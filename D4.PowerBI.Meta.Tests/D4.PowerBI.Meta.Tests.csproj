@@ -6,6 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="JSON Fragments\Filters\advanced_greater_than_filter.json" />
+    <None Remove="JSON Fragments\Filters\advanced_greater_than_or_equal_filter.json" />
+    <None Remove="JSON Fragments\Filters\advanced_less_than_filter.json" />
+    <None Remove="JSON Fragments\Filters\advanced_less_than_or_equal_filter.json" />
+    <None Remove="JSON Fragments\Filters\basic_categorical_filter.json" />
+    <None Remove="JSON Fragments\Filters\filter_with_basic_source.json" />
+    <None Remove="JSON Fragments\Filters\top_n_filter.json" />
+    <None Remove="JSON Fragments\Filters\unknown_filter.json" />
     <None Remove="PBIX\basicVisualsWithSinpleFormatting.pbix" />
     <None Remove="PBIX\fixedDataWithDataLayout.pbix" />
     <None Remove="PBIX\reportPagesWithShapes.pbix" />
@@ -14,6 +22,30 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="JSON Fragments\Filters\top_n_filter.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JSON Fragments\Filters\advanced_greater_than_or_equal_filter.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JSON Fragments\Filters\advanced_greater_than_filter.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JSON Fragments\Filters\advanced_less_than_or_equal_filter.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JSON Fragments\Filters\advanced_less_than_filter.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JSON Fragments\Filters\basic_categorical_filter.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JSON Fragments\Filters\filter_with_basic_source.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JSON Fragments\Filters\unknown_filter.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="PBIX\basicVisualsWithSinpleFormatting.pbix">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
