@@ -33,5 +33,10 @@
         public const string FilterComparison = "Comparison";
         public const string FilterComparisonKind = "ComparisonKind";
         public const string Type = "type";
+        public const string FilterValue = "Value";
+        public const string FilterNot = "Not";
+        public const string FilterRight = "Right";
+        public const string FilterLiteral = "Literal";
+        public const string FilterBlankValue = "null";
     }
 }

@@ -8,6 +8,10 @@
   <ItemGroup>
     <None Remove="JSON Fragments\Filters\advanced_greater_than_filter.json" />
     <None Remove="JSON Fragments\Filters\advanced_greater_than_or_equal_filter.json" />
+    <None Remove="JSON Fragments\Filters\advanced_is_blank_filter.json" />
+    <None Remove="JSON Fragments\Filters\advanced_is_filter.json" />
+    <None Remove="JSON Fragments\Filters\advanced_is_not_blank_filter.json" />
+    <None Remove="JSON Fragments\Filters\advanced_is_not_filter.json" />
     <None Remove="JSON Fragments\Filters\advanced_less_than_filter.json" />
     <None Remove="JSON Fragments\Filters\advanced_less_than_or_equal_filter.json" />
     <None Remove="JSON Fragments\Filters\basic_categorical_filter.json" />
@@ -22,6 +26,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="JSON Fragments\Filters\advanced_is_blank_filter.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JSON Fragments\Filters\advanced_is_filter.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JSON Fragments\Filters\advanced_is_not_blank_filter.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JSON Fragments\Filters\advanced_is_not_filter.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="JSON Fragments\Filters\top_n_filter.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

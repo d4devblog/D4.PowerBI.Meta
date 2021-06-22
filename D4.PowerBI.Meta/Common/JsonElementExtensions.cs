@@ -34,6 +34,15 @@ namespace D4.PowerBI.Meta.Common
                 : (JsonElement?)null;
         }
 
+        internal static JsonElement? GetOptionalChild(this JsonElement element, string name)
+        {
+            return element.ValueKind != JsonValueKind.Null
+                && element.ValueKind != JsonValueKind.Undefined
+                && element.TryGetProperty(name, out var value)
+                ? value
+                : element;
+        }
+
         internal static JsonElement? GetChild(this JsonElement element, int index)
         {
             if (element.ValueKind == JsonValueKind.Null || element.ValueKind == JsonValueKind.Undefined)

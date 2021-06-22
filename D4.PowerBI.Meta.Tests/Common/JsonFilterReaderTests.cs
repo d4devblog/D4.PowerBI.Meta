@@ -95,6 +95,10 @@ namespace D4.PowerBI.Meta.Tests.Common
         [InlineData("advanced_greater_than_or_equal_filter.json", FilterType.IsGreaterThanOrEqualTo)]
         [InlineData("advanced_less_than_filter.json", FilterType.IsLessThan)]
         [InlineData("advanced_less_than_or_equal_filter.json", FilterType.IsLessThanOrEqualTo)]
+        [InlineData("advanced_is_filter.json", FilterType.Is)]
+        [InlineData("advanced_is_not_filter.json", FilterType.IsNot)]
+        [InlineData("advanced_is_blank_filter.json", FilterType.IsBlank)]
+        [InlineData("advanced_is_not_blank_filter.json", FilterType.IsNotBlank)]
         [InlineData("top_n_filter.json", FilterType.TopN)]
         public void WHEN_json_filter_is_read_THEN_correct_type_is_returned(
             string jsonFile, FilterType expectedType)

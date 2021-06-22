@@ -1,0 +1,25 @@
+﻿[
+  {
+    "name": "IsBlank",
+    "expression": {
+    },
+    "filter": {
+      "From": [],
+      "Where": [
+        {
+          "Condition": {
+            "Comparison": {
+              "ComparisonKind": 0,
+              "Right": {
+                "Literal": {
+                  "Value": "null"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "type": "Advanced"
+  }
+]

@@ -1,0 +1,20 @@
+﻿[
+  {
+    "name": "Is",
+    "expression": {
+    },
+    "filter": {
+      "From": [],
+      "Where": [
+        {
+          "Condition": {
+            "Comparison": {
+              "ComparisonKind": 0
+            }
+          }
+        }
+      ]
+    },
+    "type": "Advanced"
+  }
+]

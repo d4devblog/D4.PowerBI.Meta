@@ -45,7 +45,7 @@ namespace D4.PowerBI.Meta.Common
                 var filterName = element.GetPropertyString(ReportLayoutDocument.Name)?? string.Empty;
                 var filterEntity = GetFilterSourceEntity(element);
                 var filterProperty = GetFilterSourceProperty(element);
-                var filterType = GetFiltertype(element);
+                var filterType = GetFilterType(element);
 
                 return new FilterConfiguration
                 {
@@ -83,7 +83,7 @@ namespace D4.PowerBI.Meta.Common
                 : string.Empty;
         }
 
-        private static FilterType GetFiltertype(JsonElement element)
+        private static FilterType GetFilterType(JsonElement element)
         {
             var filterType = FilterType.Unknown;
 
@@ -116,12 +116,21 @@ namespace D4.PowerBI.Meta.Common
                         ?.GetChild(ReportLayoutDocument.FilterComparison)
                         ?.GetChild(ReportLayoutDocument.FilterComparisonKind);
 
+                    var negatedComparisonKind = whereEnumerator.Current
+                        .GetChild(ReportLayoutDocument.FilterCondition)
+                        ?.GetChild(ReportLayoutDocument.FilterNot)
+                        ?.GetChild(ReportLayoutDocument.FilterExpression)
+                        ?.GetChild(ReportLayoutDocument.FilterComparison)
+                        ?.GetChild(ReportLayoutDocument.FilterComparisonKind);
+
                     if (comparisonKind.HasValue &&
                         comparisonKind.Value.ValueKind == JsonValueKind.Number)
                     {
                         var kind = comparisonKind.Value.GetInt32();
                         filterType = kind switch
                         {
+                            0 => GetDirectComparisonFllterType(whereEnumerator.Current),
+
                             1 => FilterType.IsGreaterThan,
 
                             2 => FilterType.IsGreaterThanOrEqualTo,
@@ -133,10 +142,46 @@ namespace D4.PowerBI.Meta.Common
                             _ => FilterType.Unknown
                         };
                     }
+
+                    if (negatedComparisonKind.HasValue &&
+                        negatedComparisonKind.Value.ValueKind == JsonValueKind.Number)
+                    {
+                        var kind = negatedComparisonKind.Value.GetInt32();
+                        filterType = kind switch
+                        {
+                            0 => GetDirectComparisonFllterType(whereEnumerator.Current, true),
+
+                            _ => FilterType.Unknown
+                        };
+                    }
                 }
             }
 
             return filterType;
+        }
+
+        private static FilterType GetDirectComparisonFllterType(JsonElement whereElement, bool negateFilter = false)
+        {
+            var valueElement = whereElement
+                .GetChild(ReportLayoutDocument.FilterCondition)
+                ?.GetOptionalChild(ReportLayoutDocument.FilterNot)
+                ?.GetOptionalChild(ReportLayoutDocument.FilterExpression)
+                ?.GetChild(ReportLayoutDocument.FilterComparison)
+                ?.GetChild(ReportLayoutDocument.FilterRight)
+                ?.GetChild(ReportLayoutDocument.FilterLiteral)
+                ?.GetChild(ReportLayoutDocument.FilterValue);
+
+            var nullValue = valueElement.HasValue &&
+                valueElement.Value.ValueKind == JsonValueKind.String &&
+                valueElement.Value.GetString() == ReportLayoutDocument.FilterBlankValue;
+
+            return negateFilter
+                ? nullValue
+                    ? FilterType.IsNotBlank
+                    : FilterType.IsNot
+                : nullValue
+                    ? FilterType.IsBlank
+                    : FilterType.Is;
         }
     }
 }

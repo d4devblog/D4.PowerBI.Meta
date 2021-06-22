@@ -1,0 +1,24 @@
+﻿[
+  {
+    "name": "IsNot",
+    "expression": {
+    },
+    "filter": {
+      "From": [],
+      "Where": [
+        {
+          "Condition": {
+            "Not": {
+              "Expression": {
+                "Comparison": {
+                  "ComparisonKind": 0
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "type": "Advanced"
+  }
+]
