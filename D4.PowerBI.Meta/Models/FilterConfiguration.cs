@@ -12,6 +12,10 @@ namespace D4.PowerBI.Meta.Models
 
         public FilterType FilterType { get; set; } = FilterType.Unknown;
 
+        public FilterType? SecondaryFilterType { get; set; } = null;
+
+        public SecondaryFilterCondition SecondaryFilterCondition { get; set; } = SecondaryFilterCondition.NotSet;
+
         public Filter? Filter { get; set; }
     }
 
@@ -67,5 +71,12 @@ namespace D4.PowerBI.Meta.Models
         IsBlank = 7,
         IsNotBlank = 8,
         TopN = 9
+    }
+
+    public enum SecondaryFilterCondition
+    {
+        NotSet = -1,
+        And = 0,
+        Or = 1
     }
 }

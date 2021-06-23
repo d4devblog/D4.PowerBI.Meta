@@ -14,6 +14,8 @@
     <None Remove="JSON Fragments\Filters\advanced_is_not_filter.json" />
     <None Remove="JSON Fragments\Filters\advanced_less_than_filter.json" />
     <None Remove="JSON Fragments\Filters\advanced_less_than_or_equal_filter.json" />
+    <None Remove="JSON Fragments\Filters\advanced__and__filter.json" />
+    <None Remove="JSON Fragments\Filters\advanced__or__filter.json" />
     <None Remove="JSON Fragments\Filters\basic_categorical_filter.json" />
     <None Remove="JSON Fragments\Filters\filter_with_basic_source.json" />
     <None Remove="JSON Fragments\Filters\top_n_filter.json" />
@@ -36,6 +38,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="JSON Fragments\Filters\advanced_is_not_filter.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JSON Fragments\Filters\advanced__or__filter.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JSON Fragments\Filters\advanced__and__filter.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="JSON Fragments\Filters\top_n_filter.json">

@@ -43,6 +43,21 @@ namespace D4.PowerBI.Meta.Common
                 : element;
         }
 
+        internal static JsonElement? GetFirstNamedChildren(this JsonElement element, params string[] names)
+        {
+            var matchedElement = (JsonElement?)null;
+            foreach (var name in names)
+            {
+                matchedElement = GetChild(element, name);
+                if (matchedElement.HasValue)
+                {
+                    break;
+                }
+            }
+
+            return matchedElement;
+        }
+
         internal static JsonElement? GetChild(this JsonElement element, int index)
         {
             if (element.ValueKind == JsonValueKind.Null || element.ValueKind == JsonValueKind.Undefined)

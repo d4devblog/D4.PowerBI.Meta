@@ -118,6 +118,52 @@ namespace D4.PowerBI.Meta.Tests.Common
             filters.Should().NotBeNull();
 
             filters.First().FilterType.Should().Be(expectedType);
+            filters.First().SecondaryFilterType.Should().BeNull();
+            filters.First().SecondaryFilterCondition.Should().Be(SecondaryFilterCondition.NotSet);
+        }
+
+        [Fact]
+        public void WHEN_json_filter_contains_and_condition_THEN_correct_types_are_returned()
+        {
+            var fullPath = Path.Combine(_testFilePath, "advanced__and__filter.json");
+            var jsonText = File.ReadAllText(fullPath);
+
+            var filtersTestObject = new JsonFilterTestObject
+            {
+                Filters = jsonText
+            };
+
+            var document = JsonDocument.Parse(JsonSerializer.Serialize(filtersTestObject));
+            var filterElement = document.RootElement.GetProperty(ReportLayoutDocument.Filters);
+
+            var filters = JsonFilterReader.ReadFilterConfigurations(filterElement);
+            filters.Should().NotBeNull();
+
+            filters.First().FilterType.Should().Be(FilterType.IsNotBlank);
+            filters.First().SecondaryFilterType.Should().Be(FilterType.IsGreaterThan);
+            filters.First().SecondaryFilterCondition.Should().Be(SecondaryFilterCondition.And);
+        }
+
+        [Fact]
+        public void WHEN_json_filter_contains_or_condition_THEN_correct_types_are_returned()
+        {
+            var fullPath = Path.Combine(_testFilePath, "advanced__or__filter.json");
+            var jsonText = File.ReadAllText(fullPath);
+
+            var filtersTestObject = new JsonFilterTestObject
+            {
+                Filters = jsonText
+            };
+
+            var document = JsonDocument.Parse(JsonSerializer.Serialize(filtersTestObject));
+            var filterElement = document.RootElement.GetProperty(ReportLayoutDocument.Filters);
+
+            var filters = JsonFilterReader.ReadFilterConfigurations(filterElement);
+            filters.Should().NotBeNull();
+
+            filters.First().FilterType.Should().Be(FilterType.IsLessThan);
+            filters.First().SecondaryFilterType.Should().Be(FilterType.IsGreaterThan);
+            filters.First().SecondaryFilterCondition.Should().Be(SecondaryFilterCondition.Or);
         }
     }
 }

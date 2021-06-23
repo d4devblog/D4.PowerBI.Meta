@@ -1,5 +1,6 @@
 ﻿using D4.PowerBI.Meta.Constants;
 using D4.PowerBI.Meta.Models;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
@@ -45,14 +46,16 @@ namespace D4.PowerBI.Meta.Common
                 var filterName = element.GetPropertyString(ReportLayoutDocument.Name)?? string.Empty;
                 var filterEntity = GetFilterSourceEntity(element);
                 var filterProperty = GetFilterSourceProperty(element);
-                var filterType = GetFilterType(element);
+                var filterTypes = GetFilterTypes(element);
 
                 return new FilterConfiguration
                 {
                     Name = filterName,
                     SourceEntity = filterEntity,
                     SourceProperty = filterProperty,
-                    FilterType = filterType,
+                    FilterType = filterTypes.Item1,
+                    SecondaryFilterType = filterTypes.Item2,
+                    SecondaryFilterCondition = filterTypes.Item3
                 };
             }
 
@@ -83,14 +86,17 @@ namespace D4.PowerBI.Meta.Common
                 : string.Empty;
         }
 
-        private static FilterType GetFilterType(JsonElement element)
+        private static Tuple<FilterType, FilterType?, SecondaryFilterCondition> GetFilterTypes(JsonElement element)
         {
             var filterType = FilterType.Unknown;
+            FilterType? secondaryFilterType = null;
+            var secondaryConfition = SecondaryFilterCondition.NotSet;
 
             var typeProperty = element.GetPropertyString(ReportLayoutDocument.Type);
             if (typeProperty == null)
             {
-                return filterType;
+                return Tuple.Create<FilterType, FilterType?, SecondaryFilterCondition>
+                    (filterType, secondaryFilterType, secondaryConfition);
             }
 
             if (string.Compare(typeProperty, "Categorical", true) == 0)
@@ -111,50 +117,92 @@ namespace D4.PowerBI.Meta.Common
                     var whereEnumerator = whereArray.Value.EnumerateArray();
                     whereEnumerator.MoveNext();
 
-                    var comparisonKind = whereEnumerator.Current
+                    var conditionalAnd = whereEnumerator.Current
                         .GetChild(ReportLayoutDocument.FilterCondition)
-                        ?.GetChild(ReportLayoutDocument.FilterComparison)
-                        ?.GetChild(ReportLayoutDocument.FilterComparisonKind);
+                        ?.GetChild("And");
 
-                    var negatedComparisonKind = whereEnumerator.Current
+                    var conditionalOr = whereEnumerator.Current
                         .GetChild(ReportLayoutDocument.FilterCondition)
-                        ?.GetChild(ReportLayoutDocument.FilterNot)
-                        ?.GetChild(ReportLayoutDocument.FilterExpression)
-                        ?.GetChild(ReportLayoutDocument.FilterComparison)
-                        ?.GetChild(ReportLayoutDocument.FilterComparisonKind);
+                        ?.GetChild("Or");
 
-                    if (comparisonKind.HasValue &&
-                        comparisonKind.Value.ValueKind == JsonValueKind.Number)
+                    if (conditionalAnd.HasValue || conditionalOr.HasValue)
                     {
-                        var kind = comparisonKind.Value.GetInt32();
-                        filterType = kind switch
+                        var conditionalElement = conditionalAnd ?? conditionalOr;
+
+                        //main
+                        var leftCondition = conditionalElement?.GetChild("Left");
+                        if (leftCondition.HasValue)
                         {
-                            0 => GetDirectComparisonFllterType(whereEnumerator.Current),
+                            filterType = ReadAdvancedFilterType(leftCondition.Value);
+                        }
 
-                            1 => FilterType.IsGreaterThan,
+                        var rightCondition = conditionalElement?.GetChild("Right");
+                        if (rightCondition.HasValue)
+                        {
+                            secondaryFilterType = ReadAdvancedFilterType(rightCondition.Value);
+                        }
 
-                            2 => FilterType.IsGreaterThanOrEqualTo,
-
-                            3 => FilterType.IsLessThan,
-
-                            4 => FilterType.IsLessThanOrEqualTo,
-
-                            _ => FilterType.Unknown
-                        };
+                        secondaryConfition = conditionalAnd.HasValue
+                            ? SecondaryFilterCondition.And
+                            : SecondaryFilterCondition.Or;
                     }
-
-                    if (negatedComparisonKind.HasValue &&
-                        negatedComparisonKind.Value.ValueKind == JsonValueKind.Number)
+                    else
                     {
-                        var kind = negatedComparisonKind.Value.GetInt32();
-                        filterType = kind switch
-                        {
-                            0 => GetDirectComparisonFllterType(whereEnumerator.Current, true),
-
-                            _ => FilterType.Unknown
-                        };
+                        filterType = ReadAdvancedFilterType(whereEnumerator.Current);
                     }
                 }
+            }
+
+            return Tuple.Create<FilterType, FilterType?, SecondaryFilterCondition>
+                (filterType, secondaryFilterType, secondaryConfition);
+        }
+
+        private static FilterType ReadAdvancedFilterType(JsonElement element)
+        {
+            var filterType = FilterType.Unknown;
+
+            var comparisonKind = element
+                .GetOptionalChild(ReportLayoutDocument.FilterCondition)
+                ?.GetChild(ReportLayoutDocument.FilterComparison)
+                ?.GetChild(ReportLayoutDocument.FilterComparisonKind);
+
+            var negatedComparisonKind = element
+                .GetOptionalChild(ReportLayoutDocument.FilterCondition)
+                ?.GetChild(ReportLayoutDocument.FilterNot)
+                ?.GetChild(ReportLayoutDocument.FilterExpression)
+                ?.GetChild(ReportLayoutDocument.FilterComparison)
+                ?.GetChild(ReportLayoutDocument.FilterComparisonKind);
+
+            if (comparisonKind.HasValue &&
+                comparisonKind.Value.ValueKind == JsonValueKind.Number)
+            {
+                var kind = comparisonKind.Value.GetInt32();
+                filterType = kind switch
+                {
+                    0 => GetDirectComparisonFllterType(element),
+
+                    1 => FilterType.IsGreaterThan,
+
+                    2 => FilterType.IsGreaterThanOrEqualTo,
+
+                    3 => FilterType.IsLessThan,
+
+                    4 => FilterType.IsLessThanOrEqualTo,
+
+                    _ => FilterType.Unknown
+                };
+            }
+
+            if (negatedComparisonKind.HasValue &&
+                negatedComparisonKind.Value.ValueKind == JsonValueKind.Number)
+            {
+                var kind = negatedComparisonKind.Value.GetInt32();
+                filterType = kind switch
+                {
+                    0 => GetDirectComparisonFllterType(element, true),
+
+                    _ => FilterType.Unknown
+                };
             }
 
             return filterType;
@@ -163,7 +211,7 @@ namespace D4.PowerBI.Meta.Common
         private static FilterType GetDirectComparisonFllterType(JsonElement whereElement, bool negateFilter = false)
         {
             var valueElement = whereElement
-                .GetChild(ReportLayoutDocument.FilterCondition)
+                .GetOptionalChild(ReportLayoutDocument.FilterCondition)
                 ?.GetOptionalChild(ReportLayoutDocument.FilterNot)
                 ?.GetOptionalChild(ReportLayoutDocument.FilterExpression)
                 ?.GetChild(ReportLayoutDocument.FilterComparison)
